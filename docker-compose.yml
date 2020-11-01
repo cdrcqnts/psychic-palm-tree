@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  svelte:
+    build: ./website
+    environment:
+      - HOST=0.0.0.0
+    ports:
+      - 5000:5000
+    volumes:
+      - "./website/src:/usr/src/app/src/"
+      - "./website/public:/usr/src/app/public/"
+    depends_on:
+      - api
+    command: npm run dev
+  api:
+    build: ./api
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    volumes:
+      - ./api:/app
+    depends_on:
+      - api2
+    # for development
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+  api2:
+    build: ./api2
+    expose:
+      - 8001
+    ports:
+      - 8001:8001
+    volumes:
+      - ./api2:/app
+    # for development
+    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
